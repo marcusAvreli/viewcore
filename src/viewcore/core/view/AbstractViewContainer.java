@@ -102,8 +102,8 @@ public abstract class AbstractViewContainer implements ViewContainer {
 
 	}
 	private void debugJustInCase(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
+		if (logger.isInfoEnabled()) {
+			logger.info(message);
 		}
 	}
 	/**
@@ -270,15 +270,10 @@ public abstract class AbstractViewContainer implements ViewContainer {
 		if (SwingUtilities.isEventDispatchThread()){
 			for (Delegator delegator : this.getDelegators()){
 				debugJustInCase("injecting_1");
-				if(null != thisContainer) {
-					debugJustInCase("injecting_container");
-					debugJustInCase("injecting_container"+thisContainer.getId());
-					debugJustInCase("injecting_container"+thisContainer.getViewControllerMap());
-				}else {
-					debugJustInCase("injecting_container_but_it_is_null");
-				}
+				
 				delegator.inject(thisContainer);
 			}
+			thisContainer.viewInitUIState(); 
 			
 		} else {
 			SwingUtilities.invokeLater(new Runnable(){
@@ -288,14 +283,34 @@ public abstract class AbstractViewContainer implements ViewContainer {
 							debugJustInCase("injecting_2");
 							delegator.inject(thisContainer);
 						}	
-					
+						thisContainer.viewInitUIState(); 
 					} catch (ViewException e) {
 						logger.error(e.getMessage());
 					}					
 				}
 			});
 		}
-		
+		Runnable viewActionsThread = new Runnable(){
+			public void run(){				
+				try { 
+						thisContainer.viewInitBackActions(); 
+					} catch (ViewException e1) { 
+						logger.error(e1.getMessage());
+					}
+				
+				SwingUtilities.invokeLater(
+						new Runnable(){
+							public void run(){
+								try { 
+										thisContainer.viewFinalUIState();
+									} catch (ViewException e) {
+										logger.error(e.getMessage());
+									}
+							}
+						});				
+			}
+		};
+		new Thread(viewActionsThread).start();
 		//new Thread(viewActionsThread).start();
 	}
 	
@@ -428,6 +443,8 @@ public abstract class AbstractViewContainer implements ViewContainer {
 	 * @see org.viewaframework.view.ViewContainerEventAware#fireViewInitBackActions(org.viewaframework.view.ViewContainerEvent)
 	 */
 	public void fireViewInitBackActions(ViewContainerEvent event) {
+		debugJustInCase("fire_view_init_back_actions_called");
+		debugJustInCase("size:"+viewContainerEventControllers.size());
 		for (ViewContainerEventController listener: this.viewContainerEventControllers){
 			listener.onViewInitBackActions(event);
 		}
@@ -439,5 +456,23 @@ public abstract class AbstractViewContainer implements ViewContainer {
 		for (ViewContainerEventController listener: this.viewContainerEventControllers){
 			listener.onViewFinalUIState(event);
 		}
+	}
+	public void viewInitUIState() throws ViewException {
+		
+		this.fireViewInitUIState(new ViewContainerEvent(this));
+	}
+	/* (non-Javadoc)
+	 * @see org.viewaframework.view.ViewContainer#viewInitBackActions()
+	 */
+	public void viewInitBackActions() throws ViewException {
+		
+		this.fireViewInitBackActions(new ViewContainerEvent(this));
+	}
+	/* (non-Javadoc)
+	 * @see org.viewaframework.view.ViewContainer#viewFinalUIState()
+	 */
+	public void viewFinalUIState() throws ViewException {
+		
+		this.fireViewFinalUIState(new ViewContainerEvent(this));
 	}
 }

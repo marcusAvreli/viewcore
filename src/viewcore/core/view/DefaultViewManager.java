@@ -69,7 +69,7 @@ public class DefaultViewManager extends AbstractViewManager
 	}
 
 	private void debugJustInCase(String message) {
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.info(message);
 		}
 	}

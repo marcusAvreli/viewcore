@@ -78,11 +78,7 @@ public abstract class AbstractViewManager implements ViewManager
 			view.setApplication(app);
 		 /* The view is added to the application holder */
 			this.getViews().put(viewId,view);
-			if(null != controllers && !controllers.isEmpty()) {
-				debugJustInCase("controllers_size:"+controllers.size());
-			}else {
-				debugJustInCase("controllers_is_empty");
-			}
+		
 			 /* This view can already have some controllers, if so the manager adds the dispatcher controllers*/
 			if (view.getViewControllerMap()!=null){
 				view.getViewControllerMap().putAll(controllers);
@@ -126,11 +122,7 @@ public abstract class AbstractViewManager implements ViewManager
 			//this.getPerspective().addView(view,constraint);
 		}
 		try {
-			if(view.getId().equals("TableViewId2")) {
-				if(null != view.getViewControllerMap()) {
-					debugJustInCase("before_init_view_controllerMap:"+view.getViewControllerMap());
-				}
-			}
+			
 			view.viewInit();
 		} catch (ViewException e) {
 			// TODO Auto-generated catch block
@@ -170,11 +162,11 @@ public abstract class AbstractViewManager implements ViewManager
 	 * @see org.viewa.view.ViewManager#arrangeView()
 	 */
 	private void debugJustInCase(String message) {
-		logger.info(message);
-		//if (logger.isDebugEnabled()) {
-//			logger.debug(message);
-		//}
+		
+		if (logger.isDebugEnabled()) {
+			logger.info(message);
 		}
+	}
 	public Container arrangeViews()
 	{
 		debugJustInCase("arrange_views_started");

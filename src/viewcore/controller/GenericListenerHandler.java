@@ -67,7 +67,7 @@ public class GenericListenerHandler<EL extends EventListener,EO extends EventObj
 		
 	}
 	private void debugJustInCase(String message) {
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 			logger.info(message);
 		}
 	}

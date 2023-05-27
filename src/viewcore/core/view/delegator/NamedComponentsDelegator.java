@@ -9,13 +9,21 @@ import java.util.Map;
 
 import javax.swing.JMenu;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import viewapi.view.Delegator;
 import viewapi.view.ViewContainer;
 import viewapi.view.ViewException;
 
 //https://github.com/mariogarcia/viewa/blob/c39f7f46dc39908bd23cd4ded0b60c5f555617b8/core/src/main/java/org/viewaframework/view/delegator/NamedComponentsDelegator.java#L21
 public class NamedComponentsDelegator implements Delegator{
-
+	private static final Logger logger = LoggerFactory.getLogger(NamedComponentsDelegator.class);
+	private void debugJustInCase(String message) {
+		if (logger.isDebugEnabled()) {
+			logger.info(message);
+		}
+	}
 	/* (non-Javadoc)
 	 * @see org.viewaframework.view.delegator.Delegator#clean(org.viewaframework.view.ViewContainer)
 	 */
@@ -35,7 +43,8 @@ public class NamedComponentsDelegator implements Delegator{
 	 * @param namedComponents
 	 * @return
 	 */
-	private Map<String,List<Component>> extractComponents(Component con,Map<String,List<Component>> namedComponents){		
+	private Map<String,List<Component>> extractComponents(Component con,Map<String,List<Component>> namedComponents){
+		debugJustInCase("extractComponents_called");
 		String componentName = con.getName();
 		if (componentName!=null && !componentName.equalsIgnoreCase("")){
 			List<Component> components = namedComponents.get(componentName);
@@ -54,7 +63,9 @@ public class NamedComponentsDelegator implements Delegator{
 					extractComponents(c,namedComponents);
 				}
 			}
-		}	
+		}
+		debugJustInCase("namedComponents:"+namedComponents);
+		debugJustInCase("extractComponents_finished");
 		return namedComponents;
 	}
 	

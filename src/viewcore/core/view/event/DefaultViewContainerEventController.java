@@ -3,9 +3,9 @@ package viewcore.core.view.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import viewapi.view.ViewContainer;
 import viewapi.view.event.ViewContainerEvent;
 import viewapi.view.event.ViewContainerEventController;
-import viewcore.core.AbstractApplication;
 
 /**
  * Default implementation of the {@link ViewContainerEventController}
@@ -36,7 +36,9 @@ public class DefaultViewContainerEventController implements ViewContainerEventCo
 	@Override
 	public void onViewInit(ViewContainerEvent event) {
 		
-		debugJustInCase("======on_view_init======================");
+		debugJustInCase("====== on_view_init_started ======================");
+		ViewContainer vc = event.getSource();
+		debugJustInCase("vc:"+vc.getClass().getSimpleName());
 	}
 
 	/* (non-Javadoc)
